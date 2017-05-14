@@ -1,5 +1,5 @@
 # UAV-and-TrueOrtho
-Leon's Master Paper
+Master's Thesis
 
 * Application of UAV photos generates True Ortho Image
 
