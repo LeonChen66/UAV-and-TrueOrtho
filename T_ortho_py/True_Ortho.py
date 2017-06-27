@@ -29,9 +29,14 @@ def dsm_angle(dsm_name,affine_par,EX_par):
     X_nadir = np.around(nadir_col)*A+np.around(nadir_row)*B+C;
     Y_nadir = np.around(nadir_col)*D+np.around(nadir_row)*E+F;
     Z_nadir = dsm_arr[np.around(nadir_row).astype(int),np.around(nadir_col).astype(int)];
+    """
     X_nadir = X_nadir - XL
     Y_nadir = Y_nadir - YL
     Z_nadir = Z_nadir - ZL                  
+    """    
+    X_nadir = 0
+    Y_nadir = 0
+    Z_nadir = -1    
     
     # Calculate each cell's Angle
     [y,x] = np.mgrid[0:h,0:w]
@@ -190,6 +195,7 @@ X_sigma Y_sigma Z_sigma Omega_sigma Phi_sigma Kappa_sigma
 
 #interio
 if __name__ == "__main__":
+    #I.O.
     f = 3803.28260713083182054106;
     x0 = 2471.84341749838540636119;
     y0 = 1653.25150608682383790438;
