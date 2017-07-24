@@ -132,7 +132,7 @@ def canny(img_name):
     canny = cv2.Canny(img, 1, 3)
     dst = cv2.bitwise_and(img, img, mask=canny)
     cv2.imwrite('canny.jpg',dst)
-    return canny
+    return dst
     
 if __name__=="__main__":
     #I.O.
@@ -161,9 +161,7 @@ if __name__=="__main__":
     PC_image = opening(PC_image,8)
     cv2.imwrite('PC.jpg',PC_image)
     #Canny
-    canny(img)
-    edge_img = cv2.imread('canny.jpg')
-    edge_img = cv2.cvtColor(edge_img, cv2.COLOR_BGR2GRAY)
+    edge_img = canny(img)
     contour_image = PC_p_edge(edge_img,PC_image)
     cv2.imwrite('contour.jpg',contour_image)
     
