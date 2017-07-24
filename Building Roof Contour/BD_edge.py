@@ -66,10 +66,9 @@ def PC2UAV(PC_data,h_max,h_min,h,w,*EX_par):  #EX_par = [XL,YL,ZL,omega,phi,kapp
     return PC_image
     
 def PC_p_edge(edge_image,PC_image):
-    edge_image = cv2.imread(edge_image)
-    edge_image = cv2.cvtColor(edge_image, cv2.COLOR_BGR2GRAY)
+    # edge_image = cv2.imread(edge_image)
+    # edge_image = cv2.cvtColor(edge_image, cv2.COLOR_BGR2GRAY)
     loc = np.where((edge_image>127)&(PC_image>130))
-    #[h,w] = edge_image.shape
     print(len(loc[0]))
     contour_img = np.zeros(edge_image.shape, np.uint8)
     contour_img[loc] = 255
@@ -126,21 +125,33 @@ def img_fill(im_in,n):   # n = binary image threshold
     fill_image = im_th | im_floodfill_inv
     
     return fill_image
-    
+
+def canny(img_name):
+    img = cv2.imread(img_name,0)
+    img = cv2.GaussianBlur(img, (5, 5), 0)
+    canny = cv2.Canny(img, 1, 3)
+    dst = cv2.bitwise_and(img, img, mask=canny)
+    cv2.imwrite('canny.jpg',dst)
+    return canny
     
 if __name__=="__main__":
-    XL = -44.565271;
-    YL = 17.775985;
-    ZL = 14.067157;
-    omega = -0.985902;
-    phi = 0.030544;
-    kappa = -85.832167;
+    #I.O.
     f = 3803.28260713083182054106;
     x0 = 2471.84341749838540636119;
     y0 = 1653.25150608682383790438;
-    
-    EX_par = [XL,YL,ZL,omega,phi,kappa,f,x0,y0]
 
+    df = pd.read_csv('ntu_pix4d_0212_calibrated_external_camera_parameters.txt', sep=' ')
+    img_name = df['imageName'].values
+    EX = np.array([df['X'].values, df['Y'].values, df['Z'].values,
+                   df['Omega'].values, df['Phi'].values, df['Kappa'].values]).T
+
+    img = 'DSCF2098_1471837627895.JPG'
+
+    index_image = np.where(img_name==img)             #get the index of the image
+
+    EX_par = np.squeeze(EX[index_image])     #which photos EX
+    EX_par = np.append(EX_par,[f,x0,y0])
+    print(EX_par)
     PC_image = PC2UAV('ntu_pix4d_0212_group1_densified_point_cloud.xyz',-227,-233,3264,4896,*EX_par)
     #Gaussian blur
     PC = img_gaussian(PC_image,3)
@@ -149,13 +160,15 @@ if __name__=="__main__":
     PC_image[loc] = 255
     PC_image = opening(PC_image,8)
     cv2.imwrite('PC.jpg',PC_image)
-    contour_image = PC_p_edge('test1.tif',PC_image)
+    #Canny
+    canny(img)
+    edge_img = cv2.imread('canny.jpg')
+    edge_img = cv2.cvtColor(edge_img, cv2.COLOR_BGR2GRAY)
+    contour_image = PC_p_edge(edge_img,PC_image)
     cv2.imwrite('contour.jpg',contour_image)
     
     contour_image = closing(contour_image,10)
-    #contour_image = opening(contour_image,5)
     contour_image = dilation(contour_image,5,5)
-    #contour_image = erosion(contour_image,5,5)
     cv2.imwrite('dilation.jpg',contour_image)
     fill_img = img_fill(contour_image,127)
     fill_img = erosion(fill_img,5,3)
