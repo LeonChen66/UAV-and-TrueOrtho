@@ -8,7 +8,7 @@ Master's Thesis
 
 1. Building Roof Contour
 
-- Recognize building roof contour and building roof by something like DSM but not so dense. With limited and appropriate upper bound.
+-- Recognize building roof contour and building roof by something like DSM but not so dense. With limited and appropriate upper bound.
 
 2. Dsm to UAV_BD Roof Contour
 - Recognize building roof contour and building roof by point cloud.
