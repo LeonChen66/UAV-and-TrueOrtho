@@ -132,7 +132,7 @@ def img_fill(im_in, n):  # n = binary image threshold
 
 def canny(img_name):
     img = cv2.imread(img_name, 0)
-    img = cv2.GaussianBlur(img, (5, 5), 0)
+    img = cv2.GaussianBlur(img, (9, 9), 1)
     canny = cv2.Canny(img, 1, 3)
     dst = cv2.bitwise_and(img, img, mask=canny)
     cv2.imwrite('canny.jpg', dst)
@@ -156,7 +156,7 @@ def main():
     EX = np.array([df['X'].values, df['Y'].values, df['Z'].values,
                    df['Omega'].values, df['Phi'].values, df['Kappa'].values]).T
 
-    img = 'DSCF2098_1471837627895.JPG'
+    img = 'DSCF2114_1471837627895.JPG'
 
     index_image = np.where(img_name==img)             #get the index of the image
 
