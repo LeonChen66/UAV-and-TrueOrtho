@@ -110,17 +110,22 @@ def draw_Point(ortho_edgeP,h,w):
     cv2.imwrite('test.jpg',img)    
     
 if __name__=="__main__":
-    XL = -44.565271;
-    YL = 17.775985;
-    ZL = 14.067157;
-    omega = -0.985902;
-    phi = 0.030544;
-    kappa = -85.832167;
+    # I.O.
     f = 3803.28260713083182054106;
     x0 = 2471.84341749838540636119;
     y0 = 1653.25150608682383790438;
-    
-    EX_par = [XL,YL,ZL,omega,phi,kappa,f,x0,y0]
+    # E.O.
+    df = pd.read_csv('ntu_pix4d_0212_calibrated_external_camera_parameters.txt', sep=' ')
+    img_name = df['imageName'].values
+    EX = np.array([df['X'].values, df['Y'].values, df['Z'].values,
+                   df['Omega'].values, df['Phi'].values, df['Kappa'].values]).T
+    #image name
+    img = 'DSCF2114_1471837627895.JPG'
+
+    index_image = np.where(img_name==img)             #get the index of the image
+
+    EX_par = np.squeeze(EX[index_image])     #which photos EX
+    EX_par = np.append(EX_par,[f,x0,y0])
     ortho_edgeP = UAV2ortho('ntu_pix4d_0212_group1_densified_point_cloud.xyz',approx
               ,'ntu_pix4d_0212_dsm.tfw',-220,-240,*EX_par)
     
